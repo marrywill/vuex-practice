@@ -3,32 +3,32 @@ import Vuex from 'vuex'
 import axios from 'axios'
 Vue.use(Vuex)
 
-const API_KEY = process.env.VUE_APP_YOUTUBE_API_KEY
+// const API_KEY = process.env.VUE_APP_YOUTUBE_API_KEY
+// const API_URL = 'https://www.googleapis.com/youtube/v3/search'
 const MOVIEDB_KEY = process.env.VUE_APP_MOVIE_API_KEY
-const API_URL = 'https://www.googleapis.com/youtube/v3/search'
 const NOW_PLAYING_URL = 'https://api.themoviedb.org/3/movie/now_playing'
 const TOP_RATED_URL = 'https://api.themoviedb.org/3/movie/top_rated'
 const POPULAR_URL = 'https://api.themoviedb.org/3/movie/popular'
 const UPCOMING_URL = 'https://api.themoviedb.org/3/movie/upcoming'
 // const DETAIL_URL = 'https://api.themoviedb.org/3/movie/'
-// const SEARCH_URL = 'https://api.themoviedb.org/3/search/movie'
+const SEARCH_URL = 'https://api.themoviedb.org/3/search/movie'
 
 export default new Vuex.Store({
 	state: {
 		movies: null,
-		videos: null,
+		searchMovies: null,
 	},
 	getters: {
 		movies(state) {
 			return state.movies
 		},
-		videos(state) {
-			return state.videos
+		searchMovies(state) {
+			return state.searchMovies
 		},
 	},
 	mutations: {
-		videoInput(state, payload) {
-			state.videos = payload
+		searchInput(state, payload) {
+			state.searchMovies = payload
 		},
 		getMovies(state, payload) {
 			state.movies = payload
@@ -36,21 +36,36 @@ export default new Vuex.Store({
 	},
 	actions: {
 		getVideos({ commit }, payload) {
+			// axios
+			// 	.get(API_URL, {
+			// 		params: {
+			// 			part: 'snippet',
+			// 			type: 'video',
+			// 			q: payload + ' trailer',
+			// 			key: API_KEY,
+			// 		},
+			// 	})
+			// 	.then((response) => {
+			// 		commit('videoInput', response.data.items)
+			// 	})
+			// 	.catch((error) => {
+			// 		console.log(error)
+			// 	})
 			axios
-				.get(API_URL, {
+				.get(SEARCH_URL, {
 					params: {
-						part: 'snippet',
-						type: 'video',
-						q: payload + ' trailer',
-						key: API_KEY,
+						api_key: MOVIEDB_KEY,
+						language: 'ko-KR',
+						query: payload,
+						page: 1,
+						include_adult: true,
 					},
 				})
-				.then((response) => {
-					commit('videoInput', response.data.items)
+				.then((res) => {
+					console.log(res.data.results)
+					commit('searchInput', res.data.results)
 				})
-				.catch((error) => {
-					console.log(error)
-				})
+				.catch((err) => console.log(err))
 		},
 		callMovieList({ commit }) {
 			axios

@@ -1,6 +1,6 @@
 <template>
   <div>
-    <input v-model="videoData" @keypress.enter="videoInput" type="text" />
+    <input v-model="videoData" @keypress.enter="searchInput" type="text" />
   </div>
 </template>
 
@@ -15,7 +15,7 @@ export default {
   },
   methods: {
     ...mapActions(["getVideos"]),
-    videoInput() {
+    searchInput() {
       if (this.videoData) {
         this.getVideos(this.videoData);
       }
